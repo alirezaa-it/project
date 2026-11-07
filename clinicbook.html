@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClinicBook | رزرو نوبت درمانگاه</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f7f6;--surface:#fff;--ink:#12302f;--muted:#5b7473;--line:#d3e2e0;--pri:#0e7c7b;--pri-ink:#fff;--soft:#dff1ef;--warn:#8a5a00;--warn-bg:#fff3d6;--bad:#b3261e;--bad-bg:#fde8e6;--busy:#e8eeed;
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a1a;--surface:#142625;--ink:#e3f1ef;--muted:#93b0ae;--line:#264543;--pri:#3cc2bf;--pri-ink:#062423;--soft:#1b3a38;--warn:#f1c566;--warn-bg:#3a2e12;--bad:#ff8f86;--bad-bg:#3c1a17;--busy:#1d3130;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1a1a;--surface:#142625;--ink:#e3f1ef;--muted:#93b0ae;--line:#264543;--pri:#3cc2bf;--pri-ink:#062423;--soft:#1b3a38;--warn:#f1c566;--warn-bg:#3a2e12;--bad:#ff8f86;--bad-bg:#3c1a17;--busy:#1d3130;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Vazirmatn",Tahoma,"Segoe UI",sans-serif;line-height:1.8;font-size:16px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+header{background:var(--ink);color:var(--bg);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--ink);z-index:10}
+.brand{font-weight:800;font-size:1.15rem;margin-inline-end:auto}
+.brand span{color:var(--pri)}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+header button{background:transparent;border:1px solid rgba(255,255,255,.3);color:inherit;border-radius:8px;padding:4px 14px;cursor:pointer}
+header button[aria-current="true"]{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
+main{max-width:940px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.5rem;margin:0 0 4px}
+h2{font-size:1.15rem;margin:0 0 10px}
+.sub{color:var(--muted);margin:0 0 18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.auth{max-width:420px;margin:30px auto}
+label{display:block;font-weight:600;margin:12px 0 4px}
+input,select{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg)}
+.btn{background:var(--pri);color:var(--pri-ink);border:0;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.err{color:var(--bad);font-size:.9rem;margin:6px 0 0;min-height:1.4em}
+.hint{color:var(--muted);font-size:.85rem}
+.filters{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+@media(max-width:560px){.filters{grid-template-columns:1fr}}
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.doc{background:var(--surface);border:1px solid var(--line);border-radius:6px 18px 6px 18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.doc b{font-size:1.05rem}
+.tag{display:inline-block;background:var(--soft);color:var(--ink);border-radius:20px;padding:0 10px;font-size:.85rem;width:fit-content}
+.day{margin:14px 0 4px;font-weight:600}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+.slot{border:1px solid var(--pri);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 0;cursor:pointer;text-align:center}
+.slot:hover{background:var(--soft)}
+.slot[disabled]{background:var(--busy);border-color:var(--line);color:var(--muted);text-decoration:line-through;cursor:not-allowed}
+.slot.sel{background:var(--pri);color:var(--pri-ink)}
+.lock{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:10px 14px;margin:12px 0;font-weight:600}
+.ok{background:var(--soft);border-radius:10px;padding:14px;margin-bottom:14px}
+.appt{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--line);padding:12px 0}
+.appt:first-child{border-top:0}
+.st-active{color:var(--pri);font-weight:600}.st-cancelled{color:var(--bad)}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+#toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:420px;margin-inline:auto;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;display:none;z-index:20}
+@media(prefers-reduced-motion:no-preference){.slot,.btn{transition:background .15s}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Clinic<span>Book</span></div>
+  <nav id="nav"></nav>
+</header>
+<main id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+/* ---------- داده و ذخیره‌سازی (localStorage با جایگزین حافظه) ---------- */
+const mem = {};
+const store = {
+  get(k, d) {
+    if (k in mem) return mem[k];
+    try { const v = localStorage.getItem(k); if (v) { mem[k] = JSON.parse(v); return mem[k]; } } catch (e) {}
+    return d;
+  },
+  set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const DOCTORS = [
+  { id: 1, name: "دکتر مریم احمدی", spec: "قلب و عروق", fee: 350000 },
+  { id: 2, name: "دکتر علی رضایی", spec: "داخلی", fee: 250000 },
+  { id: 3, name: "دکتر سارا کریمی", spec: "پوست و مو", fee: 300000 },
+  { id: 4, name: "دکتر حسین موسوی", spec: "ارتوپدی", fee: 320000 },
+  { id: 5, name: "دکتر نرگس صادقی", spec: "زنان و زایمان", fee: 330000 },
+  { id: 6, name: "دکتر پویا شریفی", spec: "داخلی", fee: 260000 }
+];
+const LOCK_MS = 10 * 60 * 1000, CANCEL_MIN = 120, DAILY_CAP = 2;
+const st = { user: null, view: "search", q: "", spec: "", doc: null, sel: null, lock: null, done: null, timer: null };
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fa = (n) => Number(n).toLocaleString("fa-IR");
+const norm = (s) => String(s).replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).trim();
+const fmtDay = (d) => new Intl.DateTimeFormat("fa-IR-u-ca-persian", { weekday: "long", month: "long", day: "numeric" }).format(d);
+const fmtTime = (d) => d.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit", hour12: false });
+const pad = (n) => String(n).padStart(2, "0");
+const dayKey = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+function toast(m) { const t = $("#toast"); t.textContent = m; t.style.display = "block"; clearTimeout(toast.h); toast.h = setTimeout(() => (t.style.display = "none"), 3600); }
+async function sha(s) {
+  try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
+  catch (e) { return "p:" + s; }
+}
+function validNC(c) {
+  if (!/^\d{10}$/.test(c) || /^(\d)\1{9}$/.test(c)) return false;
+  let s = 0; for (let i = 0; i < 9; i++) s += +c[i] * (10 - i);
+  const r = s % 11; return r < 2 ? +c[9] === r : +c[9] === 11 - r;
+}
+/* ---------- زمان‌های خالی (Scheduling) ---------- */
+function slotsFor(doc) {
+  const out = [], now = new Date(), taken = takenIds();
+  for (let o = 0; o < 5; o++) {
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + o);
+    const list = [];
+    for (let h = 9; h < 13; h++) for (const m of [0, 30]) {
+      const start = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, m);
+      if (start <= now) continue;
+      const id = doc.id + "|" + dayKey(start) + "|" + pad(h) + ":" + pad(m);
+      const seeded = (doc.id * 7 + o * 5 + h * 3 + m) % 6 === 0;
+      list.push({ id, start, busy: seeded || taken.has(id) });
+    }
+    if (list.length) out.push({ day, list });
+  }
+  return out;
+}
+const appts = () => store.get("cb_appts", []);
+const takenIds = () => new Set(appts().filter((a) => a.status === "active").map((a) => a.slotId));
+/* ---------- نمایش ---------- */
+function renderNav() {
+  const n = $("#nav");
+  if (!st.user) { n.innerHTML = ""; return; }
+  n.innerHTML = `<button data-v="search" ${st.view !== "my" ? 'aria-current="true"' : ""}>جستجوی پزشک</button>
+    <button data-v="my" ${st.view === "my" ? 'aria-current="true"' : ""}>نوبت‌های من</button>
+    <button id="out">خروج (${esc(st.user.name)})</button>`;
+  n.querySelectorAll("[data-v]").forEach((b) => (b.onclick = () => { releaseLock(); st.doc = null; st.done = null; st.view = b.dataset.v; render(); }));
+  $("#out").onclick = () => { releaseLock(); st.user = null; store.set("cb_session", null); st.view = "search"; render(); };
+}
+function render() { renderNav(); clearInterval(st.timer); const a = $("#app"); if (!st.user) return authView(a); if (st.view === "my") return myView(a); if (st.doc) return bookView(a); searchView(a); }
+
+function authView(a) {
+  a.innerHTML = `<div class="panel auth"><h1>ورود به ClinicBook</h1><p class="sub">نوبت پزشک را بدون تماس تلفنی رزرو کنید.</p>
+  <div class="row"><button class="btn" id="tl">ورود</button><button class="btn ghost" id="tr">ثبت‌نام</button></div>
+  <div id="f"></div></div>`;
+  const form = (reg) => {
+    $("#f").innerHTML = `${reg ? '<label for="nm">نام و نام خانوادگی</label><input id="nm" autocomplete="name">' : ""}
+    <label for="nc">کد ملی</label><input id="nc" inputmode="numeric" dir="ltr" autocomplete="username">
+    ${reg ? '<p class="hint">برای آزمایش می‌توانید از کد ملی ۰۴۹۹۳۷۰۸۹۹ استفاده کنید.</p>' : ""}
+    <label for="pw">رمز عبور</label><input id="pw" type="password" dir="ltr" autocomplete="${reg ? "new-password" : "current-password"}">
+    ${reg ? '<p class="hint">رمز عبور باید ۸ تا ۲۰ کاراکتر باشد.</p>' : ""}
+    <p class="err" id="er"></p><button class="btn" id="go">${reg ? "ساخت حساب" : "ورود"}</button>`;
+    $("#go").onclick = async () => {
+      const nc = norm($("#nc").value), pw = $("#pw").value, nm = reg ? $("#nm").value.trim() : "", er = $("#er");
+      const users = store.get("cb_users", []);
+      if (reg) {
+        if (nm.length < 3) return (er.textContent = "نام را کامل وارد کنید.");
+        if (!validNC(nc)) return (er.textContent = "کد ملی باید ۱۰ رقم و معتبر باشد.");
+        if (pw.length < 8) return (er.textContent = "رمز عبور باید حداقل ۸ کاراکتر باشد.");
+        if (pw.length > 20) return (er.textContent = "رمز عبور باید حداکثر ۲۰ کاراکتر باشد.");
+        if (users.some((u) => u.nc === nc)) return (er.textContent = "با این کد ملی قبلاً ثبت‌نام شده است. وارد شوید.");
+        const u = { nc, name: nm, h: await sha(pw) }; users.push(u); store.set("cb_users", users);
+        st.user = { nc, name: nm };
+      } else {
+        const h = await sha(pw), u = users.find((x) => x.nc === nc && x.h === h);
+        if (!u) return (er.textContent = "کد ملی یا رمز عبور درست نیست.");
+        st.user = { nc: u.nc, name: u.name };
+      }
+      store.set("cb_session", st.user); st.view = "search"; render();
+    };
+  };
+  $("#tl").onclick = () => form(false); $("#tr").onclick = () => form(true); form(false);
+}
+
+function searchView(a) {
+  const specs = [...new Set(DOCTORS.map((d) => d.spec))];
+  a.innerHTML = `<h1>جستجوی پزشک</h1><p class="sub">پزشک را با نام یا تخصص پیدا کنید و نزدیک‌ترین زمان آزاد را ببینید.</p>
+  <div class="panel filters"><div><label for="q">نام پزشک</label><input id="q" value="${esc(st.q)}"></div>
+  <div><label for="sp">تخصص</label><select id="sp"><option value="">همه تخصص‌ها</option>${specs.map((s) => `<option ${s === st.spec ? "selected" : ""}>${s}</option>`).join("")}</select></div></div>
+  <div class="docs" id="dl"></div>`;
+  const list = () => {
+    const r = DOCTORS.filter((d) => d.name.includes(st.q.trim()) && (!st.spec || d.spec === st.spec));
+    $("#dl").innerHTML = r.length ? r.map((d) => {
+      const nx = slotsFor(d).flatMap((x) => x.list).find((s) => !s.busy);
+      return `<div class="doc"><b>${d.name}</b><span class="tag">${d.spec}</span><span>ویزیت: ${fa(d.fee)} تومان</span>
+      <span class="hint">${nx ? "نزدیک‌ترین زمان آزاد: " + fmtDay(nx.start) + "، " + fmtTime(nx.start) : "زمان آزاد ندارد"}</span>
+      <button class="btn" data-d="${d.id}" ${nx ? "" : "disabled"}>انتخاب زمان</button></div>`;
+    }).join("") : '<p class="empty">پزشکی با این مشخصات پیدا نشد. فیلتر را تغییر دهید.</p>';
+    $("#dl").querySelectorAll("[data-d]").forEach((b) => (b.onclick = () => { st.doc = DOCTORS.find((d) => d.id === +b.dataset.d); st.sel = null; render(); }));
+  };
+  $("#q").oninput = (e) => { st.q = e.target.value; list(); };
+  $("#sp").onchange = (e) => { st.spec = e.target.value; list(); };
+  list();
+}
+
+function bookView(a) {
+  const d = st.doc;
+  if (st.done) {
+    a.innerHTML = `<div class="ok"><h2>نوبت شما ثبت شد</h2><p>کد پیگیری: <b dir="ltr">${st.done.track}</b></p>
+    <p>${esc(d.name)}، ${fmtDay(new Date(st.done.startISO))} ساعت ${fmtTime(new Date(st.done.startISO))}</p>
+    <p class="hint">پیامک تأیید ارسال شد (شبیه‌سازی).</p></div>
+    <button class="btn" id="mine">مشاهده نوبت‌های من</button>`;
+    $("#mine").onclick = () => { st.doc = null; st.done = null; st.view = "my"; render(); }; return;
+  }
+  const days = slotsFor(d);
+  a.innerHTML = `<button class="btn ghost" id="bk">بازگشت به جستجو</button>
+  <h1 style="margin-top:12px">${d.name}</h1><p class="sub">${d.spec} · ویزیت ${fa(d.fee)} تومان. زمان‌های خط‌خورده پر شده‌اند.</p>
+  <div class="panel">${days.map((x) => `<div class="day">${fmtDay(x.day)}</div><div class="slots">${x.list.map((s) =>
+    `<button class="slot ${st.sel === s.id ? "sel" : ""}" data-s="${s.id}" data-t="${s.start.toISOString()}" ${s.busy || st.lock ? "disabled" : ""}>${fmtTime(s.start)}</button>`).join("")}</div>`).join("")}</div>
+  <div id="pay"></div>`;
+  $("#bk").onclick = () => { releaseLock(); st.doc = null; render(); };
+  a.querySelectorAll(".slot").forEach((b) => (b.onclick = () => lockSlot(b.dataset.s, b.dataset.t)));
+  if (st.lock) payPanel();
+}
+function lockSlot(id, iso) {
+  if (takenIds().has(id)) { toast("این زمان همین الان رزرو شد. زمان دیگری انتخاب کنید."); return render(); }
+  st.sel = id; st.lock = { id, iso, exp: Date.now() + LOCK_MS }; render();
+}
+function releaseLock() { st.lock = null; st.sel = null; clearInterval(st.timer); }
+function payPanel() {
+  const d = st.doc, dt = new Date(st.lock.iso);
+  $("#pay").innerHTML = `<div class="panel"><h2>پرداخت هزینه ویزیت</h2><p>${fmtDay(dt)}، ساعت ${fmtTime(dt)} · ${fa(d.fee)} تومان</p>
+  <div class="lock">زمان برای شما نگه داشته شده است. زمان باقی‌مانده: <span id="cd" dir="ltr"></span></div>
+  <p class="err" id="pe"></p>
+  <div class="row"><button class="btn" id="ps">پرداخت موفق (آزمایشی)</button><button class="btn ghost" id="pf">پرداخت ناموفق (آزمایشی)</button><button class="btn ghost" id="pc">انصراف</button></div>
+  <p class="hint">درگاه پرداخت واقعی نیست و فقط برای نمایش سناریوهای FR-09 است.</p></div>`;
+  const tick = () => {
+    const left = st.lock ? st.lock.exp - Date.now() : 0;
+    if (left <= 0) { releaseLock(); toast("مهلت ۱۰ دقیقه‌ای تمام شد و زمان آزاد شد."); return render(); }
+    const s = Math.ceil(left / 1000); $("#cd").textContent = pad(Math.floor(s / 60)) + ":" + pad(s % 60);
+  };
+  tick(); clearInterval(st.timer); st.timer = setInterval(tick, 1000);
+  $("#pc").onclick = () => { releaseLock(); render(); };
+  $("#pf").onclick = () => { releaseLock(); toast("پرداخت ناموفق بود. زمان آزاد شد و نوبتی ثبت نشد."); render(); };
+  $("#ps").onclick = () => {
+    const iso = st.lock.iso, id = st.lock.id, day = dayKey(new Date(iso)), all = appts();
+    if (takenIds().has(id)) { releaseLock(); toast("این زمان قبلاً رزرو شده است."); return render(); }
+    const same = all.filter((a) => a.status === "active" && a.patient === st.user.nc && dayKey(new Date(a.startISO)) === day).length;
+    if (same >= DAILY_CAP) return ($("#pe").textContent = "هر بیمار حداکثر " + fa(DAILY_CAP) + " نوبت فعال در روز می‌تواند داشته باشد.");
+    const ap = { id: Date.now(), track: "CB-" + Math.random().toString(36).slice(2, 8).toUpperCase(), patient: st.user.nc, doctorId: d.id, slotId: id, startISO: iso, status: "active" };
+    all.push(ap); store.set("cb_appts", all); releaseLock(); st.done = ap; render();
+  };
+}
+
+function myView(a) {
+  const mine = appts().filter((x) => x.patient === st.user.nc).sort((p, q) => new Date(q.startISO) - new Date(p.startISO));
+  a.innerHTML = `<h1>نوبت‌های من</h1><p class="sub">لغو نوبت فقط تا ${fa(CANCEL_MIN / 60)} ساعت قبل از زمان ویزیت ممکن است.</p>
+  <div class="panel">${mine.length ? mine.map((x) => { const d = DOCTORS.find((k) => k.id === x.doctorId), t = new Date(x.startISO);
+    return `<div class="appt"><div><b>${d.name}</b> <span class="tag">${d.spec}</span><br>${fmtDay(t)}، ساعت ${fmtTime(t)}<br><span class="hint" dir="ltr">${x.track}</span></div>
+    <div class="row"><span class="${x.status === "active" ? "st-active" : "st-cancelled"}">${x.status === "active" ? "فعال" : "لغوشده"}</span>
+    ${x.status === "active" ? `<button class="btn danger" data-c="${x.id}">لغو نوبت</button>` : ""}</div></div>`; }).join("")
+    : '<p class="empty">هنوز نوبتی ندارید. از بخش جستجوی پزشک اولین نوبت را رزرو کنید.</p>'}</div>`;
+  a.querySelectorAll("[data-c]").forEach((b) => (b.onclick = () => {
+    const all = appts(), ap = all.find((x) => x.id === +b.dataset.c);
+    if (new Date(ap.startISO) - Date.now() < CANCEL_MIN * 60000) return toast("لغو فقط تا ۲ ساعت قبل از نوبت ممکن است.");
+    ap.status = "cancelled"; store.set("cb_appts", all); toast("نوبت لغو شد و زمان آن آزاد شد."); render();
+  }));
+}
+st.user = store.get("cb_session", null);
+render();
+</script>
+</body>
+</html>
